@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { TreeRepository } from 'typeorm';
 import { EmployeeEntity } from '../entities/employee.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Employee } from '../../../../domain/employee';
@@ -12,7 +12,7 @@ import { EmployeeMapper } from '../mappers/employee.mapper';
 export class EmployeesRelationalRepository implements EmployeeRepository {
   constructor(
     @InjectRepository(EmployeeEntity)
-    private readonly employeesRepository: Repository<EmployeeEntity>,
+    private readonly employeesRepository: TreeRepository<EmployeeEntity>,
   ) {}
 
   async create(data: Employee): Promise<Employee> {
@@ -27,6 +27,10 @@ export class EmployeesRelationalRepository implements EmployeeRepository {
     const entity = await this.employeesRepository.findOne({
       where: { id: Number(id) },
     });
-    return entity ? EmployeeMapper.toDomain(entity) : null;
+
+    const hierarchy =
+      await this.employeesRepository.findDescendantsTree(entity);
+
+    return entity ? EmployeeMapper.toDomain(hierarchy) : null;
   }
 }
