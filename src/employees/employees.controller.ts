@@ -10,8 +10,13 @@ import { EmployeesService } from './employees.service';
 import { Employee } from './domain/employee';
 import { NullableType } from 'src/utils/types/nullable.type';
 
-import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Employees')
+@Controller({
+  path: 'employees',
+  version: '1',
+})
 @Controller('employees')
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
